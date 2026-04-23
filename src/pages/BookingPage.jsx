@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api'
 import { io } from 'socket.io-client'
 import Navbar from '../components/Navbar'
 import SimpleLocationInput from '../components/SimpleLocationInput'
 
-const socket = io('http://localhost:5001')
+const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:4000')
 
 export default function BookingPage() {
   const location = useLocation()
@@ -64,7 +64,7 @@ export default function BookingPage() {
     }
     
     try {
-      const patientRes = await axios.post('/api/patients', {
+      const patientRes = await api.post('/api/patients', {
         name: formData.name,
         age: formData.age,
         gender: formData.gender,
@@ -77,7 +77,7 @@ export default function BookingPage() {
         }
       })
 
-      const bookingRes = await axios.post('/api/bookings', {
+      const bookingRes = await api.post('/api/bookings', {
         patient_id: patientRes.data._id,
         emergency_type: formData.emergency_type,
         pickup_location: pickupLocation.address,

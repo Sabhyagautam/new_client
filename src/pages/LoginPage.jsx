@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -41,7 +41,7 @@ export default function LoginPage() {
 
     try {
       if (mode === 'register') {
-        const res = await axios.post('/api/patients', {
+        const res = await api.post('/api/patients', {
           name: form.name,
           phone_number: form.phone,
           age: parseInt(form.age),
@@ -57,7 +57,7 @@ export default function LoginPage() {
         }))
       } else {
         // Simple phone-based login — check if patient exists
-        const res = await axios.get(`/api/patients?phone=${form.phone}`)
+        const res = await api.get(`/api/patients?phone=${form.phone}`)
         const patients = res.data
         if (!patients || patients.length === 0) {
           setError('No account found with this number. Please register.')

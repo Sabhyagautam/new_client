@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../api'
 import { io } from 'socket.io-client'
 import Navbar from '../components/Navbar'
 import SimpleLocationInput from '../components/SimpleLocationInput'
@@ -80,7 +80,7 @@ export default function RealTimeBooking() {
   }, [form.emergency_type])
 
   useEffect(() => {
-    socketRef.current = io('http://localhost:4000', {
+    socketRef.current = io(import.meta.env.VITE_API_URL || 'http://localhost:4000', {
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
@@ -125,7 +125,7 @@ export default function RealTimeBooking() {
     if (!pickup || !destination) return alert('Please enter both locations')
 
     try {
-      const patientRes = await axios.post('/api/patients', {
+      const patientRes = await api.post('/api/patients', {
         name: form.name, age: form.age, gender: form.gender,
         phone_number: form.phone, blood_group: form.blood_group,
         medical_condition: form.medical_condition,
@@ -162,7 +162,7 @@ export default function RealTimeBooking() {
     if (!currentRideId) { setStep('form'); return }
     setCancelling(true)
     try {
-      await axios.patch(`/api/bookings/${currentRideId}/cancel`, { reason: 'Cancelled by patient' })
+      await api.patch(`/api/bookings/${currentRideId}/cancel`, { reason: 'Cancelled by patient' })
       socketRef.current.emit('cancelRide', { rideId: currentRideId, reason: 'Cancelled by patient' })
       clearInterval(timerRef.current)
       setStep('form')
@@ -182,7 +182,7 @@ export default function RealTimeBooking() {
     if (feedback.confirmed === null) return alert('Please confirm if the ride was completed')
     setFeedbackSubmitting(true)
     try {
-      await axios.patch(`/api/bookings/${currentRideId}/feedback`, {
+      await api.patch(`/api/bookings/${currentRideId}/feedback`, {
         rating: feedback.rating,
         feedback_comment: feedback.comment,
         ride_confirmed_by_patient: feedback.confirmed

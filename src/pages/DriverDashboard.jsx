@@ -40,7 +40,7 @@ export default function DriverDashboard() {
     const info = JSON.parse(stored)
     setDriverInfo(info)
 
-    const socket = io('http://localhost:4000', {
+    const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:4000', {
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
@@ -169,7 +169,7 @@ export default function DriverDashboard() {
   // Fetch driver ratings from completed bookings
   const fetchRatings = async (driverId) => {
     try {
-      const res = await fetch(`http://localhost:4000/api/bookings?driverId=${driverId}`)
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/api/bookings?driverId=${driverId}`)
       const data = await res.json()
       const rated = data.filter(b => b.rating && b.driver_id === driverId)
       if (rated.length > 0) {

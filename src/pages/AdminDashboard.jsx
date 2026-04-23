@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import api from '../api'
 
 const STATUS_STYLE = {
   pending:      'bg-yellow-50 text-yellow-700 border-yellow-200',
@@ -23,8 +23,8 @@ export default function AdminDashboard() {
     setLoading(true)
     try {
       const [b, d] = await Promise.all([
-        axios.get('/api/bookings'),
-        axios.get('/api/drivers'),
+        api.get('/api/bookings'),
+        api.get('/api/drivers'),
       ])
       setBookings(b.data)
       setDrivers(d.data)
